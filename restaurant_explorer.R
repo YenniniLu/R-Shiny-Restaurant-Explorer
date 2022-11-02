@@ -1,5 +1,5 @@
 ## Problem 4 (Medium): 
-#Modify the restaurant violations Shiny app so that it displays a table of the number of restaurants within a given type of cuisine along with a count of restaurants as specified by the dba variable. 
+# Modify the restaurant violations Shiny app so that it displays a table of the number of restaurants within a given type of cuisine along with a count of restaurants as specified by the dba variable. 
 #(Hint: Be sure not to double count. The dataset should include 842 unique pizza restaurants in all boroughs and 281 Caribbean restaurants in Brooklyn.)
 
 #loading libraries
@@ -7,6 +7,9 @@ library(shiny)
 library(shinythemes)
 library(mdsr)
 library(tidyverse)
+
+mergedViolations <- Violations %>%
+  left_join(Cuisines)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(theme = shinytheme("yeti"),
