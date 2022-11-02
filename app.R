@@ -1,12 +1,8 @@
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
+## Problem 4 (Medium): 
+#Modify the restaurant violations Shiny app so that it displays a table of the number of restaurants within a given type of cuisine along with a count of restaurants as specified by the dba variable. 
+#(Hint: Be sure not to double count. The dataset should include 842 unique pizza restaurants in all boroughs and 281 Caribbean restaurants in Brooklyn.)
 
+#loading libraries
 library(shiny)
 library(shinythemes)
 library(mdsr)
@@ -18,6 +14,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
                   "Restaurant Explorer",
                   tabPanel("Overview",              # Overview panel
                            DT::dataTableOutput('overview')), 
+                  
                   tabPanel(                         # Cuisine panel
                     "Borough and Cuisines",
                     fluidRow(
@@ -43,6 +40,7 @@ ui <- fluidPage(theme = shinytheme("yeti"),
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
+  # load and wrangling the data for display: Overview Panel
   data1 <- mergedViolations %>% 
     select(boro, dba, cuisine_description) %>% 
     distinct() %>% 
@@ -50,17 +48,7 @@ server <- function(input, output) {
     count() %>% 
     ungroup()
   
-  data2 <- mergedViolations %>% 
-    select(boro, dba, cuisine_description) %>% 
-    distinct() %>% 
-    group_by(cuisine_description, boro) %>% 
-    count() %>% 
-    ungroup()
-  
-  output$overview <- DT::renderDataTable(DT::datatable(data1))  # output: Overview Panel
-  
-  
-  
+  # load and wrangling the data for display: Borough and Cuisines Panel
   datasetboro <- reactive({  # Filter data based on selections
     data <- mergedViolations %>% 
       select(boro, dba, cuisine_description) %>% 
@@ -75,6 +63,7 @@ server <- function(input, output) {
     }
     data
   })
+  
   datasetcuisine <- reactive({  # dynamic list of cuisines
     req(input$cuisine)   # wait until list is available
     data <- datasetboro() %>%
@@ -86,9 +75,7 @@ server <- function(input, output) {
     data
   })
   
-  output$table <- DT::renderDataTable(DT::datatable(datasetcuisine())) # Output: Borough and Cuisines Panel
-  
-  output$cuisinecontrols <- renderUI({
+  output$cuisinecontrols <- renderUI({ 
     availablelevels <-
       unique(sort(as.character(datasetboro()$cuisine_description)))
     selectInput(
@@ -97,6 +84,9 @@ server <- function(input, output) {
       choices = c("ALL", availablelevels)
     )
   })
+  
+  output$overview <- DT::renderDataTable(DT::datatable(data1))         # output: Overview Panel
+  output$table <- DT::renderDataTable(DT::datatable(datasetcuisine())) # Output: Borough and Cuisines Panel
 }
 
 # Run the application
