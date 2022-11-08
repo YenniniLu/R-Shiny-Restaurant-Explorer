@@ -34,9 +34,9 @@ ui <- fluidPage(theme = shinytheme("yeti"),
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
-  
-
-    
+  output$plot1 <- renderPlot({
+    plot(mtcars$wt, mtcars$mpg)
+  }, res = 96)
 }
 
 # Run the application 

@@ -7,6 +7,7 @@ library(shiny)
 library(shinythemes)
 library(mdsr)
 library(tidyverse)
+library(shinybusy)
 
 mergedViolations <- Violations %>%
   left_join(Cuisines)
