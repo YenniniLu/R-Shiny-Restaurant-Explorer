@@ -7,23 +7,24 @@ library(palmerpenguins)
 library(shiny)
 library(shinythemes)
 
+
+vars <- setdiff(names(penguins), c("species", "island", "sex", "year"))
+
 # Define UI for application that draws a histogram
-ui <- fluidPage(theme = shinytheme("yeti"),
+ui <- fluidPage(theme = shinytheme("lumen"),
                 pageWithSidebar(headerPanel = "Penguins Explorer",
                                 sidebarPanel(
                                   selectInput(
-                                    penguins$species,
+                                    inputId = "species",
                                     "Species:",
-                                    c(
-                                      "Adelie" = "Adelie",
-                                      "Gentoo" = "Gentoo",
-                                      "Chinstrap" = "Chinstrap"
+                                    choices = c(
+                                      "ALL",
+                                      unique(as.character(penguins$species))
                                     )
                                   ),
-                                  selectInput(penguins$sex,
-                                              "Gender:",
-                                              c("Male" = "male",
-                                                "Female" = "female"))
+                                  uiOutput("gendercontrols"),
+                                  selectInput('xcol', 'X Variable', vars),
+                                  selectInput('ycol', 'Y Variable', vars)
                                   ),
                                 mainPanel(
                                   plotOutput('plot1')
@@ -34,9 +35,54 @@ ui <- fluidPage(theme = shinytheme("yeti"),
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
+  
+  datasetspecies <- reactive({  # Filter data based on selections
+    data <- penguins %>%
+      select(
+        species, bill_length_mm, bill_depth_mm, flipper_length_mm, body_mass_g, sex
+      ) %>%
+      distinct()
+    req(input$species)  # wait until there's a selection
+    if (input$species != "ALL") {
+      data <- data %>%
+        filter(species == input$species)
+    }
+    data
+  })
+  
+  datasetgender <- reactive({  # dynamic list of gender
+    req(input$sex)   # wait until list is available
+    data <- datasetspecies() %>%
+      unique()
+    if (input$sex != "ALL") {
+      data <- data %>%
+        filter(sex == input$sex)
+    }
+    data
+  })
+  
+  # Combine the selected variables into a new data frame
+  selectedData <- reactive({
+    data <- datasetgender() 
+    data[, c(input$xcol, input$ycol)]
+  })
+  
   output$plot1 <- renderPlot({
-    plot(mtcars$wt, mtcars$mpg)
+    plot(selectedData(), pch = 16, cex = 1, col = "#333333")
   }, res = 96)
+  
+  
+  
+  output$gendercontrols <- renderUI({
+    availablelevels <-
+      unique(sort(as.character(datasetspecies()$sex)))
+    selectInput(
+      inputId = "sex",
+      label = "Gender:",
+      choices = c("ALL", availablelevels)
+    )
+  })
+
 }
 
 # Run the application 
