@@ -11,3 +11,13 @@ Allow the user to select a species or a gender, and to choose between various at
 ## Time Series Interactive Plot of Weather Data
 Create a Shiny app to display an interactive time series plot of the macleish weather data. 
 Include a selection box to alternate between data from the whately_2015 and orchard_2015 weather stations. 
+
+## Google Trend Index of Singers
+A Shiny App: plotting the Google Trend Index for 5 singer/group from 2008-01-01 to 2022-11-01.
+Five Singers/Group:
+* Taylor Swift
+* Justin Bibber
+* BLACKPINK
+* BTS
+* Ariana Grande
+
