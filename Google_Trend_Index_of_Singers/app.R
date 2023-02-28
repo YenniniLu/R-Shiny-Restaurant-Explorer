@@ -7,7 +7,7 @@ library(gtrendsR)
 
 # Load data ---------------------------------------------------------
 res <- gtrends(c("Taylor Swift","Justin Bieber", "BLACKPINK", "BTS", "Ariana Grande"), 
-               geo = c("US"), time = "2008-01-01 2022-11-01")
+               geo = c("US"), time = "2008-01-01 2023-02-27")
 #plot(res)
 res <- res$interest_over_time
 #head(res)
@@ -37,8 +37,8 @@ ui <- fluidPage(theme = shinytheme("lumen"),
                     
                     # Select date range to be plotted
                     dateRangeInput("date", strong("Date range"), 
-                                   start = "2008-01-01", end = "2022-11-01",
-                                   min = "2008-01-01", max = "2022-11-01"),
+                                   start = "2008-01-01", end = "2023-02-27",
+                                   min = "2008-01-01", max = "2023-02-27"),
                     
                     # Select whether to overlay smooth trend line
                     checkboxInput(inputId = "smoother", 
